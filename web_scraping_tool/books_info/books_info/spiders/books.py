@@ -15,12 +15,14 @@ class BooksSpider(scrapy.Spider):
     def parse(self, response):
         cvs_file = open('books_name_price.csv','w')
         writer = csv.writer(cvs_file)
-        writer.writerow(["Book name","Book price"])
+        writer.writerow(['Book name','Book price'])
+        i = 0
         for child in response.xpath('//article'):
             try:
-                book_name = child.xpath('//img/@alt/text()').extract()
-                book_price = child.xpath('//article//p[@class = "price_color"]/text()').extract()
-                writer.writerow([book_name,book_price])
+                book_names = child.xpath('//a//img/@alt')[i].extract()
+                book_prices = child.xpath('//p[@class = "price_color"]/text()')[i].extract()
+                writer.writerow([book_names,book_prices])
+                i += 1
             except IndexError:
                 pass
         cvs_file.close()
